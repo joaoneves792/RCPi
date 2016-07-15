@@ -4,8 +4,8 @@ import os
 import pygame
 from XboxController import XboxController
 from FF import FF
+from ClientState import ClientState
 
-#Testing repo permissions
 
 class KeyboardKeys:
     KEY_ESC = pygame.K_ESCAPE
@@ -22,7 +22,7 @@ class KeyboardKeys:
 
 
 class Client:
-    def __init__(self, server_ip, server_port, xbox):
+    def __init__(self, server_ip, server_port, time_interval, xbox):
         self.xbox_controller_enabled = xbox
         self.server_ip = server_ip
         self.server_port = server_port
@@ -39,7 +39,9 @@ class Client:
 
         self.init_pygame()
 
-    def send_command(self, data):  # data here is supposed to be a str (change if necessary)
+        self.state = ClientState(self, time_interval)
+
+    def send_message(self, data):  # data here is supposed to be a str (change if necessary)
         self.socket.sendto(data.encode(), self.server_addr)
         print(self.socket.recvfrom(1024))
 
@@ -50,7 +52,7 @@ class Client:
                 apply_throttle = (value + 100)/200
                 apply_brakes = 0
                 # Example
-                self.send_command(str(apply_throttle))
+                self.state.apply_forwards(apply_throttle)
 
             if self.xbox_controller_enabled:
                 if value > 10:
