@@ -1,5 +1,6 @@
 from threading import Lock, Timer
 
+
 class ClientState:
     def __init__(self, client, time_interval):
         self.client = client
@@ -23,20 +24,20 @@ class ClientState:
             self.timer = Timer(self.update_interval/1000, self.send_state)
             self.timer.start()
 
-    def apply_forwards(self, ammount):
+    def apply_forwards(self, amount):
         with self.state_lock:
-            self.forward = ammount
+            self.forward = amount
 
-    def apply_backwards(self, ammount):
+    def apply_backwards(self, amount):
         with self.state_lock:
-            self.backwards = ammount
+            self.backwards = amount
 
-    def apply_left(self, ammount):
+    def apply_left(self, amount):
         with self.state_lock:
-            self.left = ammount
+            self.left = amount
             self.right = 0
 
-    def apply_right(self, ammount):
+    def apply_right(self, amount):
         with self.state_lock:
-            self.right = ammount
+            self.right = amount
             self.left = 0

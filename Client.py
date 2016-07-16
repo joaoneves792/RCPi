@@ -33,6 +33,7 @@ class Client:
         self.FF = None
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.settimeout(2)
 
         if self.xbox_controller_enabled:
             self.FF = FF()
@@ -98,6 +99,8 @@ class Client:
             apply_right = 1
         elif key == KeyboardKeys.KEY_UP[1]:
             apply_throttle = 1
+            # Example
+            self.state.apply_forwards(apply_throttle)
         elif key == KeyboardKeys.KEY_DOWN[1]:
             apply_brakes = 1
 
@@ -109,20 +112,28 @@ class Client:
             apply_right = 0
         elif key == KeyboardKeys.KEY_UP[1]:
             apply_throttle = 0
+            # Example
+            self.state.apply_forwards(apply_throttle)
         elif key == KeyboardKeys.KEY_DOWN[1]:
             apply_brakes = 0
 
     def init_pygame(self):
 
-        os.environ["SDL_VIDEODRIVER"] = "dummy"
-        pygame.init()
-        # create a 1x1 pixel screen, its not used so it doesnt matter
-        screen = pygame.display.set_mode((1, 1))
-        pygame.joystick.init()
-        # get the first joystick
-        joy = pygame.joystick.Joystick(0)
-        # init that joystick
-        joy.init()
+        if self.xbox_controller_enabled:
+            os.environ["SDL_VIDEODRIVER"] = "dummy"
+            pygame.init()
+            # create a 1x1 pixel screen, its not used so it doesnt matter
+            screen = pygame.display.set_mode((1, 1))
+            pygame.joystick.init()
+            # get the first joystick
+            joy = pygame.joystick.Joystick(0)
+            # init that joystick
+            joy.init()
+        else:
+            pygame.init()
+            pygame.display.init()
+            screen = pygame.display.set_mode((100, 100))
+            pygame.display.set_caption("RCPi")
 
         if self.xbox_controller_enabled:
             self.xboxCont = XboxController(self.handle_xbox_controller, deadzone=30, scale=100, invertYAxis=True, pygameEventCallBack=self.handle_events)
@@ -130,9 +141,25 @@ class Client:
             self.FF = FF()
 
     def loop(self):
-        self.FF.play_idle()
+        if self.xbox_controller_enabled:
+            self.FF.play_idle()
+
+        # Try to establish a connection
+        while True:
+            try:
+                print("Trying to establish connection to server...")
+                self.socket.sendto("HELLO".encode(), self.server_addr)
+                response, addr = self.socket.recvfrom(1024)
+                if response.decode() == "HELLO":
+                    break
+            except socket.timeout:
+                continue
+
+        print("Connection successful!")
+
         while True:     # if we are using the xbox controller than this loop is running there in a thread of its own,
                         # in any case we want the execution of the program to be stuck in this method
+            pygame.display.update()
             if not self.xbox_controller_enabled:
                 for event in pygame.event.get():
                     self.handle_events(event)
