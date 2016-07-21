@@ -44,7 +44,7 @@ class Client:
 
         self.state = None  # we create the state after the connection has been established
 
-    def send_message(self, data):  # data here is supposed to be a str (change if necessary)
+    def send_message(self, data):
         fail_count = 0
         while True:
             if fail_count > 3:
@@ -61,7 +61,7 @@ class Client:
                 continue
 
     def handle_xbox_controller(self, control_id, value):
-        # TODO: replace the apply variables to calls to send the appropriate commands to the RPi
+        # TODO: replace the apply variables with calls to set the current state
         with self.input_lock:
             if control_id == XboxController.XboxControls.RTRIGGER:
                 apply_throttle = (value + 100)/200
@@ -102,7 +102,7 @@ class Client:
             quit()
 
     def on_key_press(self, key):
-        # TODO: replace the apply variables to calls to send the appropriate commands to the RPi
+        # TODO: replace the apply variables with calls to set the current state
         if key == KeyboardKeys.KEY_ESC:
             pygame.quit()
             quit()
@@ -119,7 +119,7 @@ class Client:
             apply_brakes = 1
 
     def on_key_release(self, key):
-        # TODO: replace the apply variables to calls to send the appropriate commands to the RPi
+        # TODO: replace the apply variables with calls to set the current state
         if key == KeyboardKeys.KEY_LEFT[1]:
             apply_left = 0
         elif key == KeyboardKeys.KEY_RIGHT[1]:

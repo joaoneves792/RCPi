@@ -71,7 +71,7 @@ def main():
             car.apply_state(state)
         except socket.timeout:
             print("Lost connection to client")
-            car.stop()  # Connection has failed enter recovery
+            car.stop()  # Connection has failed: enter recovery
             sock.settimeout(None)
             client_addr = await_connection(sock)
             sock.settimeout(timeout)
