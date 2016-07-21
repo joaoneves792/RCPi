@@ -50,7 +50,7 @@ class Client:
             if fail_count > 3:
                 self.establish_connection()
                 return
-            self.socket.sendto(data.encode(), self.server_addr)
+            self.socket.sendto(data, self.server_addr)
             try:
                 response, addr = self.socket.recvfrom(1024)
                 print(response)

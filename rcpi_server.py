@@ -4,7 +4,7 @@ from fcntl import ioctl
 from struct import pack
 from Car import Car
 from ServerState import ServerState
-from protocol import FLAGS
+from protocol import FLAGS, StatePacket
 
 
 LO = "lo"
@@ -15,14 +15,16 @@ TIMEOUT = 2000
 
 def init_socket(ip, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind((ip, port))
     return sock
 
 
-def unpack_state(data, state):
+def update_state(data, state):
     # TODO: Parse the data and update the state
-    pass
+    state_list = StatePacket.unpack_state(data)
+    if state_list[0] != FLAGS.STATUS_UPDATE:
+        return
+    print("Forward:" + str(state_list[StatePacket.FORWARD]))
 
 
 def get_ip_address(ifname):
@@ -65,13 +67,11 @@ def main():
             data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
             sock.sendto(FLAGS.get_ack(), addr)
             print("received message:", data)
-            unpack_state(data, state)
+            update_state(data, state)
             car.apply_state(state)
         except socket.timeout:
             print("Lost connection to client")
             car.stop()  # Connection has failed enter recovery
-            # sock.close()
-            # sock = init_socket(ip, args.port)
             sock.settimeout(None)
             client_addr = await_connection(sock)
             sock.settimeout(timeout)

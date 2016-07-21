@@ -1,4 +1,5 @@
 from threading import Lock, Timer
+from protocol import StatePacket
 
 
 class ClientState:
@@ -19,10 +20,15 @@ class ClientState:
     def send_state(self):
         # TODO: Send entire state in a packet
         with self.state_lock:
-            self.client.send_message(str(self.forward))
+            state_list = [0]*(2+1)  # the extra 1 stands for the status flag that gets filled when packing the list
+            state_list[StatePacket.FORWARD] = self.forward
+            state_list[StatePacket.LEFT] = self.left
 
-            self.timer = Timer(self.update_interval/1000, self.send_state)
-            self.timer.start()
+            data = StatePacket.pack_state(state_list)
+            self.client.send_message(data)
+
+        self.timer = Timer(self.update_interval/1000, self.send_state)
+        self.timer.start()
 
     def apply_forwards(self, amount):
         with self.state_lock:
