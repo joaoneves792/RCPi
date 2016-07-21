@@ -5,6 +5,7 @@ import pygame
 from XboxController import XboxController
 from FF import FF
 from ClientState import ClientState
+from protocol import FLAGS
 
 
 class KeyboardKeys:
@@ -27,6 +28,7 @@ class Client:
         self.server_ip = server_ip
         self.server_port = server_port
         self.server_addr = (self.server_ip, self.server_port)
+        self.time_interval = time_interval
 
         self.input_lock = Lock()
         self.xboxCont = None
@@ -40,11 +42,23 @@ class Client:
 
         self.init_pygame()
 
-        self.state = ClientState(self, time_interval)
+        self.state = None  # we create the state after the connection has been established
 
     def send_message(self, data):  # data here is supposed to be a str (change if necessary)
-        self.socket.sendto(data.encode(), self.server_addr)
-        print(self.socket.recvfrom(1024))
+        fail_count = 0
+        while True:
+            if fail_count > 3:
+                self.establish_connection()
+                return
+            self.socket.sendto(data.encode(), self.server_addr)
+            try:
+                response, addr = self.socket.recvfrom(1024)
+                print(response)
+                if response == FLAGS.get_ack():
+                    break
+            except socket.timeout:
+                fail_count += 1
+                continue
 
     def handle_xbox_controller(self, control_id, value):
         # TODO: replace the apply variables to calls to send the appropriate commands to the RPi
@@ -144,18 +158,10 @@ class Client:
         if self.xbox_controller_enabled:
             self.FF.play_idle()
 
-        # Try to establish a connection
-        while True:
-            try:
-                print("Trying to establish connection to server...")
-                self.socket.sendto("HELLO".encode(), self.server_addr)
-                response, addr = self.socket.recvfrom(1024)
-                if response.decode() == "HELLO":
-                    break
-            except socket.timeout:
-                continue
+        self.establish_connection()
 
         print("Connection successful!")
+        self.state = ClientState(self, self.time_interval)
 
         while True:     # if we are using the xbox controller than this loop is running there in a thread of its own,
                         # in any case we want the execution of the program to be stuck in this method
@@ -163,3 +169,14 @@ class Client:
             if not self.xbox_controller_enabled:
                 for event in pygame.event.get():
                     self.handle_events(event)
+
+    def establish_connection(self):
+        while True:
+            try:
+                print("Trying to establish connection to server...")
+                self.socket.sendto(FLAGS.get_hello(), self.server_addr)
+                response, addr = self.socket.recvfrom(1024)
+                if response == FLAGS.get_hello():
+                    break
+            except socket.timeout:
+                continue
