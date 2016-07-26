@@ -12,7 +12,7 @@ class StatePacket:
 
     @staticmethod
     def pack_state(state_list):
-        return pack(StatePacket.FMT_STR, FLAGS.STATUS_UPDATE, state_list[StatePacket.FORWARD], state_list[StatePacket.LEFT], state_list[StatePacket.BACKWARD], state_list[StatePacket.RIGHT]])
+        return pack(StatePacket.FMT_STR, FLAGS.STATUS_UPDATE, state_list[StatePacket.FORWARD], state_list[StatePacket.LEFT], state_list[StatePacket.BACKWARD], state_list[StatePacket.RIGHT])
 
     @staticmethod
     def unpack_state(data):

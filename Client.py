@@ -105,6 +105,7 @@ class Client:
         if key == KeyboardKeys.KEY_LEFT[1]:
             self.state.apply_left(1)
             self.state.apply_right(0)
+            print("left")
         elif key == KeyboardKeys.KEY_RIGHT[1]:
             self.state.apply_left(0)
             self.state.apply_right(1)

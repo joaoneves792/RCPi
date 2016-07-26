@@ -26,6 +26,7 @@ def update_state(data, state):
     state.set_backward(state_list[StatePacket.BACKWARD])
     state.set_forward(state_list[StatePacket.FORWARD])
     state.set_left(state_list[StatePacket.LEFT])
+    print(state_list[StatePacket.LEFT])
     state.set_right(state_list[StatePacket.RIGHT])
 
 def get_ip_address(ifname):
