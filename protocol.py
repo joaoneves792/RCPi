@@ -6,7 +6,7 @@ class StatePacket:
     FORWARD = 1
     LEFT = 2
     BACKWARD = 3
-    RIGHT=4
+    RIGHT = 4
 
     FMT_STR = "!B4f"
 

@@ -26,8 +26,8 @@ def update_state(data, state):
     state.set_backward(state_list[StatePacket.BACKWARD])
     state.set_forward(state_list[StatePacket.FORWARD])
     state.set_left(state_list[StatePacket.LEFT])
-    print(state_list[StatePacket.LEFT])
     state.set_right(state_list[StatePacket.RIGHT])
+
 
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,7 +37,6 @@ def get_ip_address(ifname):
 def await_connection(sock):
     while True:
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
-        print("received message:", data)
         if data == FLAGS.get_hello():
             sock.sendto(data, addr)
             return addr
@@ -68,7 +67,6 @@ def main():
         try:
             data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
             sock.sendto(FLAGS.get_ack(), addr)
-            print("received message:", data)
             update_state(data, state)
             car.apply_state(state)
         except socket.timeout:

@@ -42,9 +42,7 @@ class ClientState:
     def apply_left(self, amount):
         with self.state_lock:
             self.left = amount
-            self.right = 0
+
     def apply_right(self, amount):
         with self.state_lock:
             self.right = amount
-            self.left = 0
-            print("left changed")

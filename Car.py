@@ -35,11 +35,11 @@ class Car:
             self.move_backwards(state.get_backward())
         if state.get_left() > 0.5:
             self.turn_left()
-        if state.get_right() >0.5:
+        if state.get_right() > 0.5:
             self.turn_right()
         if state.get_left() <= 0.5 and state.get_right() <= 0.5:
             self.center_steering()
-        if state.get_forward()<= 0.5 and state.get_backward() <= 0.5:
+        if state.get_forward() <= 0.5 and state.get_backward() <= 0.5:
             self.stop()
 
 

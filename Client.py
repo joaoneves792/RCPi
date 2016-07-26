@@ -53,7 +53,6 @@ class Client:
             self.socket.sendto(data, self.server_addr)
             try:
                 response, addr = self.socket.recvfrom(1024)
-                print(response)
                 if response == FLAGS.get_ack():
                     break
             except socket.timeout:
@@ -105,7 +104,6 @@ class Client:
         if key == KeyboardKeys.KEY_LEFT[1]:
             self.state.apply_left(1)
             self.state.apply_right(0)
-            print("left")
         elif key == KeyboardKeys.KEY_RIGHT[1]:
             self.state.apply_left(0)
             self.state.apply_right(1)
