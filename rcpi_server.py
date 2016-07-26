@@ -20,12 +20,13 @@ def init_socket(ip, port):
 
 
 def update_state(data, state):
-    # TODO: Parse the data and update the state
     state_list = StatePacket.unpack_state(data)
     if state_list[0] != FLAGS.STATUS_UPDATE:
         return
-    print("Forward:" + str(state_list[StatePacket.FORWARD]))
-
+    state.set_backward(state_list[StatePacket.BACKWARD])
+    state.set_forward(state_list[StatePacket.FORWARD])
+    state.set_left(state_list[StatePacket.LEFT])
+    state.set_right(state_list[StatePacket.RIGHT])
 
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

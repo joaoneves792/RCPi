@@ -1,19 +1,18 @@
 from struct import pack, unpack
 
 
-# TODO: Complete the StatePacket class
-
 class StatePacket:
     # Constants that map indexes in the state_list to their meaning
     FORWARD = 1
     LEFT = 2
     BACKWARD = 3
+    RIGHT=4
 
-    FMT_STR = "!B2f"
+    FMT_STR = "!B4f"
 
     @staticmethod
     def pack_state(state_list):
-        return pack(StatePacket.FMT_STR, FLAGS.STATUS_UPDATE, state_list[StatePacket.FORWARD], state_list[StatePacket.LEFT])
+        return pack(StatePacket.FMT_STR, FLAGS.STATUS_UPDATE, state_list[StatePacket.FORWARD], state_list[StatePacket.LEFT], state_list[StatePacket.BACKWARD], state_list[StatePacket.RIGHT]])
 
     @staticmethod
     def unpack_state(data):

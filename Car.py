@@ -5,7 +5,7 @@ from ServerState import ServerState
 
 class Car:
     def __init__(self):
-        pass
+        self.state = 0
 
     def move_forwards(self, throttle):
         pass

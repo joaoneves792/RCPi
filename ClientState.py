@@ -18,11 +18,12 @@ class ClientState:
         self.timer.start()
 
     def send_state(self):
-        # TODO: Send entire state in a packet
         with self.state_lock:
-            state_list = [0]*(2+1)  # the extra 1 stands for the status flag that gets filled when packing the list
+            state_list = [0]*(4+1)  # the extra 1 stands for the status flag that gets filled when packing the list
             state_list[StatePacket.FORWARD] = self.forward
             state_list[StatePacket.LEFT] = self.left
+            state_list[StatePacket.BACKWARD] = self.backwards
+            state_list[StatePacket.RIGHT] = self.right
 
             data = StatePacket.pack_state(state_list)
             self.client.send_message(data)

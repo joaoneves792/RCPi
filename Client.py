@@ -61,22 +61,18 @@ class Client:
                 continue
 
     def handle_xbox_controller(self, control_id, value):
-        # TODO: replace the apply variables with calls to set the current state
         with self.input_lock:
             if control_id == XboxController.XboxControls.RTRIGGER:
-                apply_throttle = (value + 100)/200
-                apply_brakes = 0
-                # Example
-                self.state.apply_forwards(apply_throttle)
-
-            if self.xbox_controller_enabled:
-                if value > 10:
-                    self.FF.play_throttle()
-                else:
-                    self.FF.stop_throttle()
+                self.state.apply_forwards(value/100)
+                self.state.apply_backwards(0)
+                if self.xbox_controller_enabled:
+                    if value > 10:
+                        self.FF.play_throttle()
+                    else:
+                        self.FF.stop_throttle()
             if control_id == XboxController.XboxControls.LTRIGGER:
-                apply_brakes = value/100
-                apply_throtle = 0
+                self.state.apply_backwards(value/100)
+                self.state.apply_forwards(0)
                 if self.xbox_controller_enabled:
                     if value > 10:
                         self.FF.play_brakes()
@@ -84,11 +80,11 @@ class Client:
                         self.FF.stop_brakes()
             if control_id == XboxController.XboxControls.LTHUMBX:
                 if value > 0:
-                    apply_right = value/100
-                    apply_left = 0
+                    self.state.apply_right(value/100)
+                    self.state.apply_left(0)
                 else:
-                    apply_left = -(value/100)
-                    apply_right = 0
+                    self.state.apply_left(-(value/100))
+                    self.state.apply_right(0)
 
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
@@ -102,34 +98,33 @@ class Client:
             quit()
 
     def on_key_press(self, key):
-        # TODO: replace the apply variables with calls to set the current state
         if key == KeyboardKeys.KEY_ESC:
             pygame.quit()
             quit()
 
         if key == KeyboardKeys.KEY_LEFT[1]:
-            apply_left = 1
+            self.state.apply_left(1)
+            self.state.apply_right(0)
         elif key == KeyboardKeys.KEY_RIGHT[1]:
-            apply_right = 1
+            self.state.apply_left(0)
+            self.state.apply_right(1)
         elif key == KeyboardKeys.KEY_UP[1]:
-            apply_throttle = 1
-            # Example
-            self.state.apply_forwards(apply_throttle)
+            self.state.apply_forwards(1)
+            self.state.apply_backwards(0)
         elif key == KeyboardKeys.KEY_DOWN[1]:
-            apply_brakes = 1
+            self.state.apply_forwards(0)
+            self.state.apply_backwards(1)
 
     def on_key_release(self, key):
-        # TODO: replace the apply variables with calls to set the current state
+
         if key == KeyboardKeys.KEY_LEFT[1]:
-            apply_left = 0
+            self.state.apply_left(0)
         elif key == KeyboardKeys.KEY_RIGHT[1]:
-            apply_right = 0
+            self.state.apply_right(0)
         elif key == KeyboardKeys.KEY_UP[1]:
-            apply_throttle = 0
-            # Example
-            self.state.apply_forwards(apply_throttle)
+            self.state.apply_forwards(0)
         elif key == KeyboardKeys.KEY_DOWN[1]:
-            apply_brakes = 0
+            self.state.apply_backwards(0)
 
     def init_pygame(self):
 
