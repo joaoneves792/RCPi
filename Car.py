@@ -1,28 +1,46 @@
 from ServerState import ServerState
 
-# TODO: Implement these functions so that the motors get activated/deactivated when we call them
-
 
 class Car:
     def __init__(self):
-        self.state = 0
+        self.FORWARD = 1
+        self.BACKWARDS = -1
+        self.STOPPED = 0
+        self.CENTERED = 0
+        self.RIGHT = 1
+        self.LEFT= -1
+
+        self.steering = self.CENTERED
+        self.power = self.STOPPED
 
     def move_forwards(self, throttle):
-        print("moving forward")
+        if  self.power != self.FORWARD:
+            self.power = self.FORWARD
+            print("moving forward")
 
     def move_backwards(self, brakes):
-        print("moving backwards")
+        if self.power != self.BACKWARDS:
+            self.power = self.BACKWARDS
+            print("moving backwards")
 
     def stop(self):
-        print("stopping")
+        if self.power != self.STOPPED:
+            self.power = self.STOPPED
+            print("stopping")
 
     def turn_left(self):
-        print("turning left")
+        if self.steering != self.LEFT:
+            self.steering = self.LEFT
+            print("turning left")
 
     def turn_right(self):
-        print("turning right")
+        if self.steering != self.RIGHT:
+            self.steering = self.RIGHT
+            print("turning right")
 
     def center_steering(self):
+        if self.steering != self.CENTERED:
+            self.steering = self.CENTERED
         print("centering steering")
 
     def apply_state(self, st):
